@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Fare Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .result strong {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🚖 Taxi Fare Prediction</h2>
+        <form method="POST" action="/predict">
+            <label for="trip_distance">Trip Distance (km)</label>
+            <input type="text" name="trip_distance" value="{{ form_data.trip_distance if form_data else '' }}" required>
+
+            <label for="time_of_day">Time of Day</label>
+            <select name="time_of_day">
+                <option value="morning" {% if form_data and form_data.time_of_day == 'morning' %}selected{% endif %}>Morning</option>
+                <option value="afternoon" {% if form_data and form_data.time_of_day == 'afternoon' %}selected{% endif %}>Afternoon</option>
+                <option value="evening" {% if form_data and form_data.time_of_day == 'evening' %}selected{% endif %}>Evening</option>
+                <option value="night" {% if form_data and form_data.time_of_day == 'night' %}selected{% endif %}>Night</option>
+            </select>
+
+            <label for="day_of_week">Day of Week</label>
+            <select name="day_of_week">
+                <option value="weekday" {% if form_data and form_data.day_of_week == 'weekday' %}selected{% endif %}>Weekday</option>
+                <option value="weekend" {% if form_data and form_data.day_of_week == 'weekend' %}selected{% endif %}>Weekend</option>
+            </select>
+
+            <label for="traffic_condition">Traffic Condition</label>
+            <select name="traffic_condition">
+                <option value="low" {% if form_data and form_data.traffic_condition == 'low' %}selected{% endif %}>Low</option>
+                <option value="medium" {% if form_data and form_data.traffic_condition == 'medium' %}selected{% endif %}>Medium</option>
+                <option value="high" {% if form_data and form_data.traffic_condition == 'high' %}selected{% endif %}>High</option>
+            </select>
+
+            <label for="weather_condition">Weather Condition</label>
+            <select name="weather_condition">
+                <option value="clear" {% if form_data and form_data.weather_condition == 'clear' %}selected{% endif %}>Clear</option>
+                <option value="rain" {% if form_data and form_data.weather_condition == 'rain' %}selected{% endif %}>Rain</option>
+                <option value="snow" {% if form_data and form_data.weather_condition == 'snow' %}selected{% endif %}>Snow</option>
+            </select>
+
+            <label for="trip_duration">Trip Duration (minutes)</label>
+            <input type="text" name="trip_duration" value="{{ form_data.trip_duration if form_data else '' }}" required>
+
+            <input type="submit" value="Predict Fare">
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <p>🚕 Estimated Fare: <strong>${{ prediction }}</strong></p>
+                <p>📊 Confidence Range: <strong>${{ confidence }}</strong></p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
